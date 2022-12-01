@@ -9,18 +9,19 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
-  styleUrls: ['home.page.scss'],
+  styleUrls: ['home.page.scss'],  
 })
 export class HomePage {
 
   public students: Student[];
 
   constructor(private studentService: StudentService, private alertController: AlertController, private router: Router) {
-    this.students = this.studentService.getStudents();
-
+    this.studentService.getStudents().subscribe(res => {
+      this.students = res
+    });
   }
 
-  public async removeStudent(pos: number) {
+  public async removeStudent(id: string) {
     const alert = await this.alertController.create({
       header: 'Confirmación',
       subHeader: '¿Estás seguro que deseas eliminar?',
@@ -37,27 +38,30 @@ export class HomePage {
           text: 'Aceptar',
           role: 'confirm',
           handler: () => {
-            this.students = this.studentService.removeStudent(pos);
+            this.studentService.removeStudent(id).subscribe(res => {
+              this.students = res
+            })
           }
         }
       ]
     });
-
     await alert.present();
-
-
-
   }
 
-  public getStudentByControlNumber(cn: string): void {
-    //console.log(this.studentService.getStudentByControlNumber(cn));
+  public getStudentByControlNumber(id: string): void {
     this.router.navigate(['/view-student'], {
-      queryParams: { cn: cn },
+      queryParams: { id: id },
     });
   }
 
   public goToNewStudent(): void {
     this.router.navigate(['/new-student']);
+  }
+
+  public goToUpdateStudent(id: string): void {
+    this.router.navigate(['/update-student'], {
+      queryParams: { id: id }
+    });
   }
 
 }

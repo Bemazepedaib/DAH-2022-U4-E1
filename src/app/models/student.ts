@@ -7,4 +7,5 @@ export class Student {
     email: string;
     career: string;
     photo: string;
+    id?: string
 }

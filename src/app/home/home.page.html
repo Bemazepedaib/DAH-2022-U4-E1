@@ -11,7 +11,7 @@
         <ion-col>
             <ion-list>
                 <ion-item-sliding *ngFor="let item of students; let i=index">
-                    <ion-item (click)="getStudentByControlNumber(item.controlnumber)">
+                    <ion-item (click)="getStudentByControlNumber(item.id)">
                         <ion-label>
                             <strong>{{item.name}}</strong>
                             <ion-chip color="primary" outline="true" class="ion-float-right">
@@ -22,16 +22,16 @@
                             </h4>
                         </ion-label>
                     </ion-item>
-                    <ion-item-options side="end" (ionSwipe)="removeStudent(i)">
+                    <ion-item-options side="end" (ionSwipe)="removeStudent(item.id)">
                         <ion-item-option expandable color="danger">
                             <ion-icon name="trash-outline"></ion-icon>
                         </ion-item-option>
                     </ion-item-options>
-                    <!-- <ion-item-options side="start" (ionSwipe)="getStudentByControlNumber(item.controlnumber)">
+                    <ion-item-options side="start" (ionSwipe)="goToUpdateStudent(item.id)">
                         <ion-item-option expandable color="primary">
                             <ion-icon name="person-circle-outline"></ion-icon>
                         </ion-item-option>
-                    </ion-item-options> -->
+                    </ion-item-options>
                 </ion-item-sliding>
 
             </ion-list>

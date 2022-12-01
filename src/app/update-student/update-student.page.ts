@@ -3,23 +3,44 @@ import { Student } from '../models/student';
 import { StudentService } from '../services/student.service';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ToastController } from '@ionic/angular';
+import { ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-new-student',
-  templateUrl: './new-student.page.html',
-  styleUrls: ['./new-student.page.scss'],
+  selector: 'app-update-student',
+  templateUrl: './update-student.page.html',
+  styleUrls: ['./update-student.page.scss'],
 })
-export class NewStudentPage implements OnInit {
+export class UpdateStudentPage implements OnInit {
 
   public myForm: FormGroup;
   public validationMessages: Object;
+  public searched: Boolean = false;
   public activeStudent: Student;
 
-  constructor(private studentService: StudentService, private fb: FormBuilder, private tc: ToastController) { }
+  constructor(private studentService: StudentService, private fb: FormBuilder, private tc: ToastController, private aR: ActivatedRoute,private router: Router) {
+    this.activeStudent = {
+      name: "",
+      age: 0,
+      career: "",
+      email: "",
+      photo: "",
+      nip: 0,
+      curp: "",
+      id: "",
+      controlnumber: ""
+    }
 
-  async addStudent() {
+    this.aR.queryParams.subscribe((params) => {
+      this.studentService.getStudent(params.id).subscribe(res => {
+        this.activeStudent = res
+      })
+    });
+  }
+
+  async updateStudent() {
     if (this.myForm.valid) {
-      let st: Student = {
+      let newStudent = {
         controlnumber: this.myForm.get('controlnumber').value,
         name: this.myForm.get('name').value,
         curp: this.myForm.get('curp').value,
@@ -28,17 +49,18 @@ export class NewStudentPage implements OnInit {
         email: this.myForm.get('email').value,
         career: this.myForm.get('career').value,
         photo: this.myForm.get('photo').value
-      };
-      this.studentService.newStudent(st)
+      }
+      this.studentService.updateStudent(this.activeStudent.id, newStudent)
       this.myForm.reset();
       let toast = await this.tc.create({
-        message: 'Estudiante agregado',
+        message: 'Estudiante actualizado',
         duration: 2000
       });
       toast.present();
+      this.router.navigate(['/home']);
     } else {
       let toast = await this.tc.create({
-        message: 'Verifique que todos los campos estén correctos antes de agregar',
+        message: 'Verifique que todos los campos estén correctos',
         duration: 2000
       });
       toast.present();
@@ -99,6 +121,7 @@ export class NewStudentPage implements OnInit {
         { type: 'pattern', message: "El url está mal formado" }
       ]
     }
+    this.myForm.controls['controlnumber'].disable();
   }
 
 }
